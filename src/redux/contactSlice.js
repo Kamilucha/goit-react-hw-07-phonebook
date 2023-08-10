@@ -1,48 +1,29 @@
-import { createSlice} from "@reduxjs/toolkit";
-import { nanoid } from 'nanoid';
-import { persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-
-
-const contactsInitialState = {
-    contacts: [],
-};
+import { createSlice, isAnyOf } from "@reduxjs/toolkit";
+import { initialContacts } from "./initialState";
+import { getContactsThunk, addContactsThunk, deleteContactThunk } from "./thunk";
+import {
+  fn,
+  handleFulfilled,
+  handleFulfilledAdd,
+  handleFulfilledDelete,
+  handleFulfilledGet,
+  handlePending,
+  handleRejected,
+} from 'services/funcSlice';
 
 const contactsSlice = createSlice({
-  name: "contacts",
-  initialState: contactsInitialState,
-  reducers: {
-    addContacts: {
-      reducer(state, action) {
-        state.contacts.push(action.payload);
-      },
-      prepare(name, number) {
-        return {
-            payload: {
-                name, 
-                number,
-            id: nanoid(),
-          },
-        };
-      },
-    },
-    deleteContact(state, action) {
-      const index = state.contacts.findIndex(contact => contact.id === action.payload);
-      state.contacts.splice(index, 1);
-    },
+  name: 'contacts',
+  initialState: initialContacts,
+  extraReducers: builder => {
+    builder
+      .addCase(getContactsThunk.fulfilled, handleFulfilledGet)
+      .addCase(addContactsThunk.fulfilled, handleFulfilledAdd)
+      .addCase(deleteContactThunk.fulfilled, handleFulfilledDelete)
+      .addMatcher(isAnyOf(...fn('pending')), handlePending)
+      .addMatcher(isAnyOf(...fn('rejected')), handleRejected)
+      .addMatcher(isAnyOf(...fn('fulfilled')), handleFulfilled);
   },
 });
 
-const persistConfig = {
-  key: 'contacts',
-  storage,
-};
-
-export const persistedReducer = persistReducer(
-  persistConfig,
-  contactsSlice.reducer
-);
-
-
-export const { addContacts, deleteContact } = contactsSlice.actions;
 export const contactsReducer = contactsSlice.reducer;
+

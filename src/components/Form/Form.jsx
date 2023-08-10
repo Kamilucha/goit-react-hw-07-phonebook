@@ -1,17 +1,17 @@
 import { useState } from "react"
-import shortid from "shortid"
 import { useDispatch, useSelector } from 'react-redux';
 import { getContacts } from 'redux/selector';
-import { addContacts } from 'redux/contactSlice';
+import { addContactsThunk } from 'redux/thunk';
 import { Input, Label, FormContainer, Button } from "./Form.styled"
+
 
 
 const Form = () => {
     const [name, setName] = useState('');
     const [number, setNumber] = useState('');
 
-    const nameInputId = shortid.generate();
-    const telInputId = shortid.generate();
+    // const nameInputId = shortid.generate();
+    // const telInputId = shortid.generate();
 
     const dispatch = useDispatch();
     const contacts = useSelector(getContacts);
@@ -40,16 +40,16 @@ const Form = () => {
 
         const duplicate = contacts.some(
       contact =>
-        contact.name.toLowerCase() === name.toLowerCase() &&
+        contact.name.toLowerCase() === name.toLowerCase() ||
         contact.number === number
     );
 
     if (duplicate) {
       return alert (`${name} is already in contacts`);
     }
+    console.log(name, number)
 
-
-        dispatch(addContacts(name, number));
+        dispatch(addContactsThunk(name, number));
 
         reset()
     };
@@ -63,7 +63,7 @@ const Form = () => {
 
     return (
         <FormContainer onSubmit={handleSubmit}>
-            <Label htmlFor={nameInputId}> Name
+            <Label> Name
             <Input
                 type="text"
                 name="name"
@@ -71,11 +71,10 @@ const Form = () => {
                 title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
                 required
                 value={name}
-                onChange={handleChange}
-                id={nameInputId}           />
+                onChange={handleChange}/>
 
                 </Label>
-                <Label htmlFor={telInputId}>
+                <Label>
                     Number
             <Input
                 type="tel"
@@ -84,8 +83,7 @@ const Form = () => {
                 title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
                 required
                 value={number}
-                onChange={handleChange}
-               id={telInputId } />
+                onChange={handleChange}/>
                 </Label>
             <Button type="submit">Add contact</Button>
      </FormContainer>
