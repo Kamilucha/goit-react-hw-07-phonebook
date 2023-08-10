@@ -5,7 +5,7 @@ import { Item, Text } from './ContactItem.styled'
 import { deleteContactThunk } from 'redux/thunk';
 
 export const ContactItem = ({ name, number, id }) => {
-    console.log(id)
+    console.log(id, number)
 
     const dispatch = useDispatch();
 
