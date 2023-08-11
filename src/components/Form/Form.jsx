@@ -41,15 +41,21 @@ const Form = () => {
         const duplicate = contacts.some(
       contact =>
         contact.name.toLowerCase() === name.toLowerCase() ||
-        contact.number === number
+        contact.phone === number
     );
 
     if (duplicate) {
       return alert (`${name} is already in contacts`);
     }
-    console.log(name, number)
 
-        dispatch(addContactsThunk(name, number));
+        const newContact = {
+                name,
+                number,
+        };
+
+
+        dispatch(addContactsThunk(newContact));
+        console.log(newContact)
 
         reset()
     };

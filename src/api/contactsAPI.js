@@ -4,7 +4,7 @@ const URL = 'https://64d3734c67b2662bf3dc400b.mockapi.io/api/v1';
 
 export const fetchContacts = async () => {
   const { data } = await axios.get(`${URL}/contacts`);
-console.log(data)
+  
   return data;
 };
 
